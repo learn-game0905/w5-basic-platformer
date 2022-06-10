@@ -14,13 +14,17 @@ namespace Game.Runtime.Character
 
         private InputAction _moveAction;
         private InputAction _attackAction;
+        private InputAction _jumpAction;
         private CustomInputSystem _playerInputs;
 
         #endregion
+
         [SerializeField] private Transform gfx;
+        [SerializeField] private LayerMask groundMask;
+        [SerializeField] private BoxCollider2D boxCollider2D;
         private Rigidbody2D rb;
         private CharacterStatsController _characterStatsController;
-        private CharacterStats Stats => this._characterStatsController.Stats;
+        private CharacterStats Stats => _characterStatsController.Stats;
         private CharacterStateMachine _characterStateMachine;
         private CharacterAnimationController _characterAnimationController;
 
@@ -38,6 +42,34 @@ namespace Game.Runtime.Character
             _characterStateMachine.SetState(new IdleState());
         }
 
+
+        private void FixedUpdate()
+        {
+            if (block) return;
+
+            _moveDir = _moveAction.ReadValue<Vector2>();
+
+            StartCoroutine(this._moveDir.magnitude > 0 ? _characterStateMachine.State.Walk() :
+                IsGround() ? _characterStateMachine.State.Idle() : _characterStateMachine.State.Jump());
+
+            if (_attackAction.IsPressed())
+            {
+                StartCoroutine(_characterStateMachine.State.Attack());
+            }
+
+            if (this._jumpAction.IsPressed() && IsGround())
+            {
+                StartCoroutine(_characterStateMachine.State.Jump());
+            }
+
+
+            //
+            // if (!IsGround())
+            // {
+            //     this._characterAnimationController.Jump();
+            // }
+        }
+
         private void InitialActions()
         {
             _playerInputs = new CustomInputSystem();
@@ -45,43 +77,46 @@ namespace Game.Runtime.Character
             _moveAction.Enable();
             _attackAction = _playerInputs.Player.Attack;
             _attackAction.Enable();
+            _jumpAction = _playerInputs.Player.Jump;
+            _jumpAction.Enable();
         }
 
         public void Idle()
         {
             _characterAnimationController.Idle();
-            Vector3 velocity = this.rb.velocity;
+            Vector3 velocity = rb.velocity;
             velocity.x = 0;
-            this.rb.velocity = velocity;
+            rb.velocity = velocity;
         }
 
         public void Move()
         {
-            Vector3 velocity = this.rb.velocity;
+            Vector3 velocity = rb.velocity;
             _characterAnimationController.Walk();
-            this.gfx.localScale = new Vector3(this._moveDir.x, 1, 1);
-            velocity.x = this._moveDir.x * Stats.moveSpeed;
-            this.rb.velocity = velocity;
+            gfx.localScale = new Vector3(_moveDir.x, 1, 1);
+            velocity.x = _moveDir.x * Stats.moveSpeed;
+            rb.velocity = velocity;
         }
 
-        public float Attack()
+        public void Attack()
         {
-            _characterAnimationController.Attack(1);
-            return CharacterAnimation.Attack1Duration;
+            _characterAnimationController.Attack(1, Stats.attackSpeed);
         }
 
-        private void Update()
+        public bool IsGround()
         {
-            if (block) return;
-            this._moveDir = this._moveAction.ReadValue<Vector2>();
-            if (_attackAction.IsPressed())
-            {
-                StartCoroutine(_characterStateMachine.State.Attack());
-            }
+            var bounds = this.boxCollider2D.bounds;
+            bounds.size = new Vector2(bounds.size.x - .1f, bounds.size.y);
+            return Physics2D.BoxCast(bounds.center, bounds.size, 0f, Vector2.down, .1f, this.groundMask);
+        }
 
-            StartCoroutine(this._moveDir.magnitude > 0
-                ? this._characterStateMachine.State.Walk()
-                : this._characterStateMachine.State.Idle());
+        public void Jump()
+        {
+            this._characterAnimationController.Jump();
+            if (!IsGround()) return;
+            var velocity = this.rb.velocity;
+            velocity.y += Stats.jumpHeight;
+            rb.velocity = velocity;
         }
     }
 }

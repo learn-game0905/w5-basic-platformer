@@ -7,8 +7,10 @@ namespace Game.Runtime.Stats.Character
     {
         public float attack;
         public float attackRange;
+        public float attackSpeed;
         public float health;
         public float maxHealth;
         public float moveSpeed;
+        public float jumpHeight;
     }
 }

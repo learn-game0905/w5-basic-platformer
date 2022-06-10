@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83f1f641f7cd71c42b87900349d1071d, type: 3}
   m_Name: Character
   m_EditorClassIdentifier: 
-  attack: 2
+  attack: 1
   attackRange: 1.25
+  attackSpeed: 1.75
   health: 15
   maxHealth: 10
   moveSpeed: 3.5
+  jumpHeight: 5

@@ -10,21 +10,9 @@ namespace Game.Runtime.Character
             this.characterController.Idle();
             yield break;
         }
-        
-        public override IEnumerator Walk()
-        {
-            this.characterStateMachine.SetState(new WalkState());
-            yield break;
-        }
 
-        public override IEnumerator Attack()
+        public override IEnumerator Idle()
         {
-            this.characterStateMachine.SetState(new AttackState());
-            yield break;
-        }
-        public override IEnumerator TakenDamage()
-        {
-            this.characterStateMachine.SetState(new TakenDamageState());
             yield break;
         }
     }

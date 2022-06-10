@@ -64,7 +64,7 @@ namespace Game.Runtime.Enemy
             this._enemyStateMachine.SetState(new IdleState());
         }
 
-        private void Death()
+        public override void Death()
         {
             GetComponent<Rigidbody2D>().simulated = false;
             GetComponent<EnemyController>().enabled = false;

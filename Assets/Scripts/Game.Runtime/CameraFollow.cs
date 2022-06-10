@@ -12,7 +12,6 @@ namespace Game.Runtime
         {
             if (this.target == null) return;
             transform.position = this.target.position + this.offset;
-            
         }
     }
 }

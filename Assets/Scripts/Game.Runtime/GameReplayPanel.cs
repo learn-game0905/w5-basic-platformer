@@ -22,6 +22,7 @@ namespace Game.Runtime
         private void SetVisible(bool visible)
         {
             this.canvasGroup.alpha = visible ? 1f : 0f;
+            this.canvasGroup.interactable = visible;
         }
 
         public void Render(string state)

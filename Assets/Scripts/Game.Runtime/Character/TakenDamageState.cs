@@ -16,5 +16,25 @@ namespace Game.Runtime.Character
             this.characterCombatController.ActionTakenDamage();
             yield break;
         }
+
+        public override IEnumerator Idle()
+        {
+            yield break;
+        }
+
+        public override IEnumerator Walk()
+        {
+            yield break;
+        }
+
+        public override IEnumerator Attack()
+        {
+            yield break;
+        }
+
+        public override IEnumerator Jump()
+        {
+            yield break;
+        }
     }
 }

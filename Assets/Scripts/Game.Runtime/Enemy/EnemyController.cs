@@ -21,10 +21,11 @@ namespace Game.Runtime.Enemy
         private Vector2 _moveDir;
 
         public bool block;
-        
+
         [SerializeField] private Transform attackPoint;
         [SerializeField] private LayerMask playerMask;
         [SerializeField] private Transform target;
+
         private void Start()
         {
             this.rb = GetComponent<Rigidbody2D>();
@@ -62,6 +63,7 @@ namespace Game.Runtime.Enemy
                     flipX = -1;
                 }
             }
+
             this._enemyAnimationController.Walk();
             this.gfx.localScale = new Vector3(flipX, 1, 1);
             velocity.x = this._moveDir.x * this.Stats.moveSpeed;
@@ -76,7 +78,8 @@ namespace Game.Runtime.Enemy
 
         private Transform CastTarget()
         {
-            Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(transform.position, Stats.followRange, this.playerMask);
+            Collider2D[] collider2Ds =
+                Physics2D.OverlapCircleAll(transform.position, Stats.followRange, this.playerMask);
             if (collider2Ds == null) return null;
             Transform minTarget = null;
             float minDistance = float.MaxValue;
@@ -92,6 +95,7 @@ namespace Game.Runtime.Enemy
 
             return minTarget;
         }
+
         private void FollowTarget()
         {
             this.target = CastTarget();
@@ -100,13 +104,15 @@ namespace Game.Runtime.Enemy
                 StartCoroutine(this._enemyStateMachine.State.Idle());
                 return;
             }
-            float distance = Vector2.Distance(this.target.position, this.attackPoint.position);
-            if (distance <= Stats.attackRange + 1f)
+            Collider2D playerCollider = Physics2D.OverlapCircle(this.attackPoint.position, Stats.attackRange, this.playerMask);
+            // float distance = Vector2.Distance(this.target.position, this.attackPoint.position);
+            if (playerCollider)
             {
                 StartCoroutine(this._enemyStateMachine.State.Attack());
                 return;
             }
-            this._moveDir = (this.target.position - this.attackPoint.position).normalized;
+
+            this._moveDir = (this.target.position - this.transform.position).normalized;
             StartCoroutine(this._enemyStateMachine.State.Walk());
         }
     }

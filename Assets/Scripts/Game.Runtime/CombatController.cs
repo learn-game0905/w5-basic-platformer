@@ -13,6 +13,7 @@ namespace Game.Runtime
 
         public abstract void Hit();
         public abstract void TakenDamage(float damage);
+        public abstract void Death();
         protected virtual void OnDestroy()
         {
             ColliderDictionary.RemoveCombatController(this._collider2D);

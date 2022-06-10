@@ -23,6 +23,7 @@ namespace Game.Runtime.Character
             
             this._characterAnimationController.AddAttackEvent(Hit);
             this._characterAnimationController.AddHurtEvent(EndTakenDamage);
+            this._characterAnimationController.AddEndAttackEvent(EndAttack);
         }
         public override void Hit()
         {
@@ -60,10 +61,15 @@ namespace Game.Runtime.Character
             this._characterStateMachine.SetState(new IdleState());
         }
 
-        private void Death()
+        private void EndAttack()
         {
-            GetComponent<Rigidbody2D>().simulated = false;
+            this._characterStateMachine.SetState(new IdleState());
+        }
+
+        public override void Death()
+        {
             GetComponent<CharacterController>().enabled = false;
+            GetComponent<Rigidbody2D>().simulated = false;
             this._characterAnimationController.Death();
             StateManager.Instance.Lose();
             StartCoroutine(Disappear());

@@ -19,16 +19,19 @@ namespace Game.Runtime.Character
             ColliderDictionary.AddCharacterStatsController(this._collider2D, this);
             this.stats = Instantiate(this.stats);
             this.stats.health = this.stats.maxHealth;
+            RenderHealth();
+            HudManager.Instance.RenderAttack(this.stats.attack);
+            HudManager.Instance.RenderJumpHeight(this.stats.jumpHeight);
         }
 
         private void RenderHealth()
         {
             healthBarRenderer.Render(this.stats.health, this.stats.maxHealth);
         }
+        
         public bool TakenDamage(float damage)
         {
-            if (this.stats.health - damage < 0) return true;
-            this.stats.health -= damage;
+            this.stats.health = this.stats.health - damage <= 0 ? 0 : this.stats.health - damage;
             RenderHealth();
             return this.stats.health <= 0;
         }
@@ -46,6 +49,19 @@ namespace Game.Runtime.Character
 
             RenderHealth();
         }
+
+        public void AttackBuff(float value)
+        {
+            this.stats.attack += value;
+            HudManager.Instance.RenderAttack(this.stats.attack);
+        }
+
+        public void JumpBuff(float value)
+        {
+            this.stats.jumpHeight += value;
+            HudManager.Instance.RenderJumpHeight(this.stats.jumpHeight);
+        }
+
         private void OnDestroy()
         {
             ColliderDictionary.RemoveCharacterStatsController(this._collider2D);

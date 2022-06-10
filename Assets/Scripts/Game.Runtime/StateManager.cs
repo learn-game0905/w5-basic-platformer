@@ -17,12 +17,12 @@ namespace Game.Runtime
 
         public void Win()
         {
-            gameReplayPanel.Render("Victory!!!");
+            gameReplayPanel.Render("Victory");
         }
 
         public void Lose()
         {
-            gameReplayPanel.Render("Lose!!!");
+            gameReplayPanel.Render("Defeated");
         }
     }
 }

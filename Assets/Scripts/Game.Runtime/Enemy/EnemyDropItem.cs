@@ -1,14 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Game.Runtime.Enemy
 {
     public class EnemyDropItem : MonoBehaviour
     {
-        [SerializeField] private GameObject itemPrefab;
+        public List<GameObject> itemPrefabs;
 
         public void Drop()
         {
-            Instantiate(this.itemPrefab).transform.position = transform.position;
+            if (this.itemPrefabs == null) return;
+            for (int i = 0; i < itemPrefabs.Count; i++)
+            {
+                var position = transform.position;
+                position.x += .75f * i;
+                Instantiate(itemPrefabs[i]).transform.position = position;
+            }
         }
     }
 }
